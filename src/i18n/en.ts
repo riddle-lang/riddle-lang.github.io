@@ -394,6 +394,60 @@ clue run`,
     ],
     note: 'Syntax and ABI stability are not guaranteed. Treat Riddle as a language worth trying seriously — not one to ship to production.',
   },
+  roadmap: {
+    eyebrow: 'Roadmap',
+    title: 'What comes next',
+    subtitle:
+      'This roadmap is the project’s actual priority order: correctness first, language capability second, then toolchain and ecosystem. It reorders with feedback and promises no dates.',
+    phases: [
+      {
+        tag: '01 · Near term',
+        title: 'The language core',
+        desc: 'Correctness first — finish the foundations of the safety semantics.',
+        items: [
+          'General slice types: `[T]`, `&[T]` and `&mut [T]` (landing now)',
+          'Defined integer arithmetic: overflow, division by zero and invalid shifts stop inheriting C’s undefined behavior',
+          '`?` error propagation and an error-conversion protocol for `Result<T, E>`',
+          'Standalone `loop`, `break` with values and labels, and or / range / slice patterns',
+          'Stronger inference: `Vector::new()` element types from later use, `Default::default`-style associated-function dispatch, and explicit `FnMut` / `FnOnce` function types',
+        ],
+      },
+      {
+        tag: '02 · Mid term',
+        title: 'Standard library and toolchain',
+        desc: 'As the language can express more, the library and the tools have to keep pace.',
+        items: [
+          'A larger standard library: file and buffered IO, parsing, time, random numbers, Map / Set, hashing and full formatting',
+          'The LSP catches up: hover, go to definition, find references, rename and formatting',
+          'Dependency management in `clue`: a registry, version resolution, git dependencies and a lockfile',
+          'Library projects produce static / dynamic libraries, not just C source',
+        ],
+      },
+      {
+        tag: '03 · Long term',
+        title: 'After the core stabilizes',
+        desc: 'These are deliberately sequenced after the core semantics settle — no head start.',
+        items: [
+          'Concurrency and async / await',
+          'Backends beyond C',
+          'The stability promise for syntax and the runtime ABI',
+        ],
+      },
+    ],
+    note: 'Want to shift the priorities? Tell us on GitHub Issues which item you need most.',
+  },
+  author: {
+    eyebrow: 'About the author',
+    title: 'One person, one language',
+    name: 'zi2ven',
+    role: 'Author and sole maintainer of Riddle',
+    motto: 'Riddle is Best',
+    bio: [
+      'From the first line of `riddlec` to the page you are reading — the compiler, `clue`, `riddle-lsp`, `ridup`, the standard library, the docs and the Playground — everything comes from the same pair of hands.',
+      'Being a one-person project is also why it believes in writing the boundaries down: what works and what does not yet, stated plainly on this site and in the docs. If something breaks while you try it, file an issue on GitHub.',
+    ],
+    link: { label: 'Find zi2ven on GitHub', href: 'https://github.com/zi2ven' },
+  },
   cta: {
     title: 'Write a few lines of Riddle',
     subtitle: 'Nothing to install — compile and run it right in your browser.',

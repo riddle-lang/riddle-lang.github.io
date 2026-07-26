@@ -1,0 +1,45 @@
+---
+import SectionHead from './SectionHead.astro';
+import { inline } from '../lib/inline';
+import type { SiteContent } from '../i18n';
+
+interface Props {
+  t: SiteContent;
+}
+
+const { t } = Astro.props;
+---
+
+<section id="roadmap" class="section border-t border-line bg-surface/45">
+  <div class="shell">
+    <SectionHead eyebrow={t.roadmap.eyebrow} title={t.roadmap.title} subtitle={t.roadmap.subtitle} />
+
+    <div class="mt-14 grid gap-5 lg:grid-cols-3">
+      {
+        t.roadmap.phases.map((phase, index) => (
+          <div
+            class="reveal rounded-[var(--radius-card)] border border-line bg-bg p-7"
+            style={`transition-delay:${index * 90}ms`}
+          >
+            <span class="font-mono text-[13px] tabular-nums text-brand">{phase.tag}</span>
+            <h3 class="mt-3 text-[16px] font-medium tracking-tight">{phase.title}</h3>
+            <p class="mt-2 text-[13.5px] leading-relaxed text-muted" set:html={inline(phase.desc)} />
+            <ul class="mt-5 space-y-2.5">
+              {phase.items.map((row) => (
+                <li class="flex gap-2.5 text-[14px] leading-relaxed text-muted">
+                  <span class="mt-[8px] size-1 shrink-0 rounded-full bg-brand" aria-hidden="true" />
+                  <span set:html={inline(row)} />
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+
+    <p
+      class="reveal mt-8 max-w-3xl text-[14px] leading-relaxed text-muted"
+      set:html={inline(t.roadmap.note)}
+    />
+  </div>
+</section>

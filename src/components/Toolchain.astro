@@ -2,13 +2,21 @@
 import Icon from './Icon.astro';
 import SectionHead from './SectionHead.astro';
 import { inline } from '../lib/inline';
-import type { SiteContent } from '../i18n';
+import type { SiteContent, ToolchainEntry } from '../i18n';
 
 interface Props {
   t: SiteContent;
 }
 
 const { t } = Astro.props;
+
+// keep [...] parameter groups intact when a usage line wraps
+const usage = (text: string) => text.replace(/\[[^\]]*\]/g, (g) => g.replaceAll(' ', ' '));
+
+const tools: (ToolchainEntry & { link?: { label: string; href: string } })[] = [
+  t.toolchain.manager,
+  ...t.toolchain.items,
+];
 ---
 
 <section id="toolchain" class="section border-t border-line bg-surface/45">
@@ -19,76 +27,251 @@ const { t } = Astro.props;
       subtitle={t.toolchain.subtitle}
     />
 
-    <article
-      class="reveal mt-14 grid min-w-0 gap-8 rounded-[var(--radius-card)] border border-brand/25 bg-bg p-7 sm:p-9 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-12"
-    >
-      <div class="min-w-0">
-        <div class="flex items-baseline gap-3">
-          <h3 class="font-mono text-[19px] font-semibold tracking-tight text-brand">
-            {t.toolchain.manager.name}
-          </h3>
-          <p class="text-[13px] text-muted">{t.toolchain.manager.tagline}</p>
-        </div>
-        <p
-          class="mt-4 text-[15px] leading-relaxed text-ink/85"
-          set:html={inline(t.toolchain.manager.desc)}
-        />
+    <div class="tc reveal mt-14" data-toolchain>
+      <div class="tc-rail" role="tablist" aria-orientation="vertical" aria-label={t.toolchain.title}>
         {
-          t.toolchain.manager.usage && (
-            <p class="scroll-thin mt-5 overflow-x-auto rounded-lg bg-code px-3 py-2 font-mono text-[12.5px] whitespace-pre text-muted">
-              {t.toolchain.manager.usage}
-            </p>
-          )
-        }
-        <a
-          class="mt-6 inline-flex items-center gap-1.5 text-[14px] font-medium text-brand transition-opacity hover:opacity-70"
-          href={t.toolchain.manager.link.href}
-        >
-          {t.toolchain.manager.link.label}
-          <Icon name="external" size={14} />
-        </a>
-      </div>
-
-      <ul class="grid min-w-0 gap-3 self-center sm:grid-cols-2 sm:gap-x-8">
-        {
-          t.toolchain.manager.points.map((point) => (
-            <li class="flex gap-2.5 text-[13.5px] leading-relaxed text-muted">
-              <Icon name="dot" size={13} class="mt-[5px] shrink-0 text-brand" />
-              <span set:html={inline(point)} />
-            </li>
+          tools.map((tool, index) => (
+            <button
+              type="button"
+              class="tc-tab"
+              style={`--i:${index}`}
+              role="tab"
+              id={`tc-tab-${tool.name}`}
+              aria-controls={`tc-panel-${tool.name}`}
+              aria-selected={index === 0 ? 'true' : 'false'}
+              tabindex={index === 0 ? 0 : -1}
+            >
+              <span class="block font-mono text-[15px] font-semibold tracking-tight">
+                {tool.name}
+              </span>
+              <span class="mt-1 block text-[13px] leading-snug text-muted">{tool.tagline}</span>
+            </button>
           ))
         }
-      </ul>
-    </article>
+      </div>
 
-    <div class="mt-5 grid gap-5 lg:grid-cols-3">
-      {
-        t.toolchain.items.map((item, index) => (
-          <article
-            class="reveal flex min-w-0 flex-col rounded-[var(--radius-card)] border border-line bg-bg p-7 transition-[border-color,transform] duration-300 hover:-translate-y-0.5 hover:border-brand/40"
-            style={`transition-delay:${index * 80}ms`}
-          >
-            <h3 class="font-mono text-[17px] font-semibold tracking-tight text-brand">
-              {item.name}
-            </h3>
-            <p class="mt-1 text-[13px] text-muted">{item.tagline}</p>
-            <p class="mt-4 text-[14px] leading-relaxed text-ink/85" set:html={inline(item.desc)} />
-            {item.usage && (
-              <p class="scroll-thin mt-4 overflow-x-auto rounded-lg bg-code px-3 py-2 font-mono text-[12.5px] whitespace-pre text-muted">
-                {item.usage}
-              </p>
-            )}
-            <ul class="mt-6 space-y-2.5 border-t border-line pt-5">
-              {item.points.map((point) => (
-                <li class="flex gap-2.5 text-[13.5px] leading-relaxed text-muted">
-                  <Icon name="check" size={14} class="mt-[3px] shrink-0 text-brand" />
-                  <span set:html={inline(point)} />
-                </li>
-              ))}
-            </ul>
-          </article>
-        ))
-      }
+      <div class="tc-stage">
+        {
+          tools.map((tool, index) => {
+            const link = tool.link ?? null;
+            return (
+              <section
+                class:list={['tc-panel', index === 0 && 'is-active']}
+                style={`--i:${index}`}
+                role="tabpanel"
+                id={`tc-panel-${tool.name}`}
+                aria-labelledby={`tc-tab-${tool.name}`}
+                tabindex="0"
+              >
+                <div class="hidden items-baseline gap-3 lg:flex">
+                  <h3 class="font-mono text-[19px] font-semibold tracking-tight text-brand">
+                    {tool.name}
+                  </h3>
+                  <p class="text-[13px] text-muted">{tool.tagline}</p>
+                </div>
+                <p
+                  class="mt-0 text-[15px] leading-relaxed text-ink/85 lg:mt-4"
+                  set:html={inline(tool.desc)}
+                />
+                {tool.usage && (
+                  <p class="mt-5 rounded-lg bg-code py-2.5 pr-3 pl-[calc(0.75rem+2ch)] font-mono text-[13px] whitespace-pre-wrap text-muted [text-indent:-2ch]">
+                    {usage(tool.usage)}
+                  </p>
+                )}
+                <ul class="mt-6 grid gap-3 border-t border-line pt-6 sm:grid-cols-2 sm:gap-x-8">
+                  {tool.points.map((point) => (
+                    <li class="flex gap-2.5 text-[13.5px] leading-relaxed text-muted">
+                      <Icon name="check" size={14} class="mt-[3px] shrink-0 text-brand" />
+                      <span set:html={inline(point)} />
+                    </li>
+                  ))}
+                </ul>
+                {link && (
+                  <a
+                    class="mt-7 inline-flex items-center gap-1.5 text-[14px] font-medium text-brand transition-opacity hover:opacity-70"
+                    href={link.href}
+                  >
+                    {link.label}
+                    <Icon name="external" size={14} />
+                  </a>
+                )}
+              </section>
+            );
+          })
+        }
+      </div>
     </div>
   </div>
 </section>
+
+<style>
+  /* Mobile: `display: contents` lifts tabs and panels into one grid so that
+     `order` can interleave them into an accordion. Desktop restores the
+     two-column rail + stage layout. Mirrors FeatureShowcase. */
+  .tc {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+  }
+
+  .tc-rail,
+  .tc-stage {
+    display: contents;
+  }
+
+  .tc-tab {
+    order: calc(var(--i) * 2);
+    min-width: 0;
+  }
+
+  .tc-panel {
+    order: calc(var(--i) * 2 + 1);
+    padding: 8px 4px 28px;
+    min-width: 0;
+  }
+
+  .tc-tab {
+    position: relative;
+    display: block;
+    width: 100%;
+    border-radius: 12px;
+    padding: 13px 16px;
+    text-align: start;
+    color: var(--c-ink);
+    transition:
+      background-color 0.25s ease,
+      color 0.25s ease;
+  }
+
+  .tc-tab:hover {
+    background-color: color-mix(in oklab, var(--c-surface) 70%, transparent);
+  }
+
+  .tc-tab[aria-selected='true'] {
+    background-color: var(--c-surface);
+  }
+
+  .tc-tab[aria-selected='true']::before {
+    content: '';
+    position: absolute;
+    inset-block: 12px;
+    inset-inline-start: 0;
+    width: 2px;
+    border-radius: 2px;
+    background-color: var(--color-brand);
+  }
+
+  .tc-tab[aria-selected='true'] > span:first-child {
+    color: var(--color-brand);
+  }
+
+  /* Only hide inactive panels once the enhancement script has run, so the
+     no-JS render still shows every panel. */
+  .tc.is-enhanced .tc-panel:not(.is-active) {
+    display: none;
+  }
+
+  .tc.is-enhanced .tc-panel.is-active {
+    animation: tc-enter 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes tc-enter {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .tc {
+      grid-template-columns: minmax(0, 26fr) minmax(0, 70fr);
+      column-gap: clamp(28px, 4vw, 56px);
+      align-items: start;
+    }
+
+    .tc-rail {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      position: sticky;
+      top: 84px;
+    }
+
+    .tc-stage {
+      display: block;
+      min-height: 26rem;
+    }
+
+    .tc-tab,
+    .tc-panel {
+      order: 0;
+    }
+
+    .tc-panel {
+      padding: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tc.is-enhanced .tc-panel.is-active {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-toolchain]');
+
+  if (root) {
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>('.tc-tab')];
+    const panels = [...root.querySelectorAll<HTMLElement>('.tc-panel')];
+
+    // Signals to CSS that inactive panels may now be hidden.
+    root.classList.add('is-enhanced');
+
+    const select = (index: number, focus = false) => {
+      tabs.forEach((tab, i) => {
+        const active = i === index;
+        tab.setAttribute('aria-selected', String(active));
+        tab.tabIndex = active ? 0 : -1;
+      });
+      panels.forEach((panel, i) => panel.classList.toggle('is-active', i === index));
+      if (focus) tabs[index]?.focus();
+    };
+
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => select(index));
+
+      tab.addEventListener('keydown', (event) => {
+        const last = tabs.length - 1;
+        let next: number | null = null;
+
+        switch (event.key) {
+          case 'ArrowDown':
+          case 'ArrowRight':
+            next = index === last ? 0 : index + 1;
+            break;
+          case 'ArrowUp':
+          case 'ArrowLeft':
+            next = index === 0 ? last : index - 1;
+            break;
+          case 'Home':
+            next = 0;
+            break;
+          case 'End':
+            next = last;
+            break;
+        }
+
+        if (next !== null) {
+          event.preventDefault();
+          select(next, true);
+        }
+      });
+    });
+  }
+</script>

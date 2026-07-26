@@ -128,6 +128,29 @@ export interface SiteContent {
     limits: string[];
     note: string;
   };
+  roadmap: {
+    eyebrow: string;
+    title: string;
+    subtitle: string;
+    phases: {
+      /** mono tag above the card title, e.g. "v0.2 · 近期" */
+      tag: string;
+      title: string;
+      desc: string;
+      items: string[];
+    }[];
+    note: string;
+  };
+  author: {
+    eyebrow: string;
+    title: string;
+    name: string;
+    role: string;
+    /** the author's GitHub bio, shown verbatim as a mono chip */
+    motto: string;
+    bio: string[];
+    link: { label: string; href: string };
+  };
   cta: {
     title: string;
     subtitle: string;

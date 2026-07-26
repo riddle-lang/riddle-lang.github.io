@@ -1,0 +1,53 @@
+---
+import Icon from './Icon.astro';
+import SectionHead from './SectionHead.astro';
+import { inline } from '../lib/inline';
+import type { SiteContent } from '../i18n';
+
+interface Props {
+  t: SiteContent;
+}
+
+const { t } = Astro.props;
+---
+
+<section id="author" class="section">
+  <div class="shell">
+    <SectionHead eyebrow={t.author.eyebrow} title={t.author.title} />
+
+    <div class="reveal mt-12 flex max-w-3xl flex-col gap-7 sm:flex-row sm:gap-9">
+      <img
+        src="/author.png"
+        alt={t.author.name}
+        width="96"
+        height="96"
+        loading="lazy"
+        class="size-24 shrink-0 rounded-full border border-line"
+      />
+      <div class="min-w-0">
+        <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1.5">
+          <h3 class="font-mono text-[19px] font-semibold tracking-tight text-brand">
+            {t.author.name}
+          </h3>
+          <p class="text-[13.5px] text-muted">{t.author.role}</p>
+          <span class="inline-code text-[12px]">{t.author.motto}</span>
+        </div>
+        {
+          t.author.bio.map((paragraph) => (
+            <p
+              class="mt-4 text-[14.5px] leading-relaxed text-muted"
+              set:html={inline(paragraph)}
+            />
+          ))
+        }
+        <a
+          class="mt-6 inline-flex items-center gap-1.5 text-[14px] font-medium text-brand transition-opacity hover:opacity-70"
+          href={t.author.link.href}
+        >
+          {t.author.link.label}
+          <Icon name="external" size={14} />
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

@@ -374,6 +374,60 @@ clue run`,
     ],
     note: '不保证语法和 ABI 稳定。请把 Riddle 当作可以认真试用、但还不能上生产的语言。',
   },
+  roadmap: {
+    eyebrow: '发展规划',
+    title: '接下来要做什么',
+    subtitle:
+      '这份路线图就是项目当前真实的优先级排序:正确性最先,语言能力其次,工具链与生态随后。顺序会随反馈调整,不构成时间承诺。',
+    phases: [
+      {
+        tag: '01 · 近期',
+        title: '语言核心',
+        desc: '正确性优先,先把安全语义的地基打完。',
+        items: [
+          '通用切片类型:`[T]`、`&[T]` 与 `&mut [T]`(正在落地)',
+          '明确整数算术语义:溢出、除零与非法移位不再继承 C 的未定义行为',
+          '`Result<T, E>` 的 `?` 错误传播与错误转换协议',
+          '独立 `loop`、带值和标签的 `break`,以及 or / range / slice 模式',
+          '更强的类型推断:`Vector::new()` 按后续使用推断元素类型、`Default::default` 一类关联函数分派、显式 `FnMut` / `FnOnce` 函数类型',
+        ],
+      },
+      {
+        tag: '02 · 中期',
+        title: '标准库与工具链',
+        desc: '语言能写的东西多了,库和工具要跟上。',
+        items: [
+          '标准库扩充:文件与缓冲 IO、解析、时间、随机数、Map / Set、哈希与完整格式化',
+          'LSP 补齐 Hover、跳转定义、查找引用、重命名与格式化',
+          '`clue` 依赖管理:registry、版本解析、git 依赖与 lockfile',
+          '库项目产出静态库 / 动态库,而不只是 C 源码',
+        ],
+      },
+      {
+        tag: '03 · 远期',
+        title: '核心稳定之后',
+        desc: '这些方向明确排在核心语义稳定之后,现在不抢跑。',
+        items: [
+          '并发与 async / await',
+          'C 之外的其他后端',
+          '语法与运行时 ABI 的稳定化承诺',
+        ],
+      },
+    ],
+    note: '想影响优先级?到 GitHub Issues 告诉我们你最需要哪一项。',
+  },
+  author: {
+    eyebrow: '关于作者',
+    title: '一个人,一门语言',
+    name: 'zi2ven',
+    role: 'Riddle 的作者与唯一维护者',
+    motto: 'Riddle is Best',
+    bio: [
+      '从 `riddlec` 的第一行代码到你正在看的这个页面——编译器、`clue`、`riddle-lsp`、`ridup`、标准库、文档和 Playground——都出自同一双手。',
+      '也因为是一个人写的,这个项目更相信把边界写清楚:哪些已经能用、哪些还不行,官网和文档都照实标注。试用中发现问题,欢迎直接到 GitHub 提 issue。',
+    ],
+    link: { label: '在 GitHub 上找到 zi2ven', href: 'https://github.com/zi2ven' },
+  },
   cta: {
     title: '写几行 Riddle 试试',
     subtitle: '不用安装任何东西，在浏览器里就能编译运行。',

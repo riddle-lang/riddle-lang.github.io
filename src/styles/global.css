@@ -243,20 +243,17 @@
 }
 
 /* thin scrollbars inside code panes */
-.astro-code::-webkit-scrollbar,
-.scroll-thin::-webkit-scrollbar {
+.astro-code::-webkit-scrollbar {
   height: 8px;
   width: 8px;
 }
 
-.astro-code::-webkit-scrollbar-thumb,
-.scroll-thin::-webkit-scrollbar-thumb {
+.astro-code::-webkit-scrollbar-thumb {
   background-color: color-mix(in oklab, var(--c-muted) 35%, transparent);
   border-radius: 999px;
 }
 
-.astro-code::-webkit-scrollbar-track,
-.scroll-thin::-webkit-scrollbar-track {
+.astro-code::-webkit-scrollbar-track {
   background: transparent;
 }
 
