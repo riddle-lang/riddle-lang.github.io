@@ -1,0 +1,54 @@
+---
+import CodePane from './CodePane.astro';
+import SectionHead from './SectionHead.astro';
+import { inline } from '../lib/inline';
+import type { SiteContent } from '../i18n';
+
+interface Props {
+  t: SiteContent;
+}
+
+const { t } = Astro.props;
+---
+
+<section id="start" class="section border-t border-line bg-surface/45">
+  <div class="shell">
+    <SectionHead
+      eyebrow={t.quickstart.eyebrow}
+      title={t.quickstart.title}
+      subtitle={t.quickstart.subtitle}
+    />
+
+    <ol class="mt-14 grid gap-8 lg:grid-cols-[1.24fr_0.76fr] lg:gap-10">
+      {
+        t.quickstart.steps.map((step, index) => (
+          <li class="reveal min-w-0" style={`transition-delay:${index * 90}ms`}>
+            <div class="flex items-baseline gap-3">
+              <span class="grid size-6 shrink-0 place-items-center rounded-full border border-brand/50 font-mono text-[11px] text-brand">
+                {index + 1}
+              </span>
+              <h3 class="text-[17px] font-medium tracking-tight">{step.title}</h3>
+            </div>
+            <p
+              class="mt-2.5 ps-9 text-[14px] leading-relaxed text-muted"
+              set:html={inline(step.desc)}
+            />
+            <CodePane
+              code={step.code}
+              lang={step.lang}
+              copyLabel={t.a11y.copy}
+              copiedLabel={t.a11y.copied}
+              chrome={false}
+              class="mt-5 bg-bg"
+            />
+          </li>
+        ))
+      }
+    </ol>
+
+    <p
+      class="reveal mt-10 max-w-3xl text-[13.5px] leading-relaxed text-muted"
+      set:html={inline(t.quickstart.footnote)}
+    />
+  </div>
+</section>

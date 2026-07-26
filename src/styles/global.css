@@ -1,0 +1,282 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------------------------------------------------------------- fonts */
+
+@font-face {
+  font-family: 'Maple Mono';
+  src: url('/fonts/MapleMono-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Maple Mono';
+  src: url('/fonts/MapleMono-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* --------------------------------------------------------------- tokens */
+
+:root {
+  --c-bg: #ffffff;
+  --c-surface: #f5f5f7;
+  --c-raised: #ffffff;
+  --c-line: #d2d2d7;
+  --c-ink: #1d1d1f;
+  --c-muted: #6e6e73;
+  --c-code: #f5f5f7;
+  --c-glow: color-mix(in oklab, #00a1d6 12%, transparent);
+  color-scheme: light;
+}
+
+.dark {
+  --c-bg: #0a0a0b;
+  --c-surface: #141416;
+  --c-raised: #18181b;
+  --c-line: #26262a;
+  --c-ink: #e8e8ed;
+  --c-muted: #98989d;
+  --c-code: #0e0e10;
+  --c-glow: color-mix(in oklab, #00a1d6 26%, transparent);
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-brand: #00a1d6;
+  --color-brand-deep: #005670;
+
+  --color-bg: var(--c-bg);
+  --color-surface: var(--c-surface);
+  --color-raised: var(--c-raised);
+  --color-line: var(--c-line);
+  --color-ink: var(--c-ink);
+  --color-muted: var(--c-muted);
+  --color-code: var(--c-code);
+
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', 'Noto Sans SC', Helvetica, Arial, sans-serif;
+  --font-mono:
+    'Maple Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono',
+    monospace;
+
+  --radius-card: 12px;
+  --radius-pill: 980px;
+}
+
+/* --------------------------------------------------------------- base */
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--c-bg);
+    color: var(--c-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  /* Maple Mono ligates `--` into an em dash, which silently rewrites CLI flags.
+     Turn ligatures off everywhere the mono face is used. */
+  code,
+  pre,
+  kbd,
+  samp,
+  .font-mono {
+    font-variant-ligatures: none;
+    font-feature-settings:
+      'liga' 0,
+      'calt' 0;
+  }
+
+  ::selection {
+    background-color: color-mix(in oklab, #00a1d6 32%, transparent);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+}
+
+/* --------------------------------------------------------- components */
+
+@utility shell {
+  width: 100%;
+  max-width: 1120px;
+  margin-inline: auto;
+  padding-inline: 22px;
+}
+
+.section {
+  padding-block: clamp(88px, 12vh, 160px);
+}
+
+.headline {
+  font-weight: 600;
+  letter-spacing: -0.022em;
+  line-height: 1.08;
+}
+
+.hairline {
+  border-color: var(--c-line);
+}
+
+/* Apple-style capsule buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45em;
+  border-radius: var(--radius-pill);
+  padding: 0.62em 1.35em;
+  font-size: 0.975rem;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  transition:
+    background-color 0.24s ease,
+    color 0.24s ease,
+    border-color 0.24s ease,
+    transform 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn-primary {
+  background-color: var(--color-brand);
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background-color: color-mix(in oklab, #00a1d6 86%, #ffffff);
+}
+
+.btn-ghost {
+  border: 1px solid var(--c-line);
+  color: var(--c-ink);
+}
+
+.btn-ghost:hover {
+  border-color: color-mix(in oklab, #00a1d6 60%, var(--c-line));
+  color: var(--color-brand);
+}
+
+.inline-code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  line-height: 1;
+  padding: 0.18em 0.42em;
+  border-radius: 5px;
+  background-color: color-mix(in oklab, var(--c-muted) 14%, transparent);
+  color: color-mix(in oklab, var(--c-ink) 88%, var(--color-brand));
+  /* Identifiers must not break mid-token: `riddle-lsp` would split at the
+     hyphen and `cargo build --workspace --release` mid-flag. Long commands
+     belong in a scrollable code block, not in a chip. */
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------------------- reveal */
+
+/* Gated on `.js` so a no-script render (and any crawler that skips scripts)
+   shows every section instead of a page of invisible elements. */
+.js .reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.js .reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* --------------------------------------------------------------- code */
+
+.astro-code {
+  background-color: var(--c-code) !important;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.75;
+  tab-size: 4;
+  overflow-x: auto;
+  padding: 20px 22px;
+  margin: 0;
+}
+
+.astro-code code {
+  display: block;
+  width: fit-content;
+  min-width: 100%;
+}
+
+.dark .astro-code,
+.dark .astro-code span {
+  color: var(--shiki-dark) !important;
+  font-style: var(--shiki-dark-font-style) !important;
+  font-weight: var(--shiki-dark-font-weight) !important;
+  text-decoration: var(--shiki-dark-text-decoration) !important;
+}
+
+.dark .astro-code {
+  background-color: var(--c-code) !important;
+}
+
+/* thin scrollbars inside code panes */
+.astro-code::-webkit-scrollbar,
+.scroll-thin::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+.astro-code::-webkit-scrollbar-thumb,
+.scroll-thin::-webkit-scrollbar-thumb {
+  background-color: color-mix(in oklab, var(--c-muted) 35%, transparent);
+  border-radius: 999px;
+}
+
+.astro-code::-webkit-scrollbar-track,
+.scroll-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ----------------------------------------------------------- a11y/motion */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  .js .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}

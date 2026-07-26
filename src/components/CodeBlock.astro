@@ -1,0 +1,28 @@
+---
+import { Code } from 'astro:components';
+import riddleGrammar from '../data/riddle.tmLanguage.json';
+
+interface Props {
+  code: string;
+  lang?: string;
+  class?: string;
+}
+
+const { code, lang = 'riddle', class: className = '' } = Astro.props;
+
+const language: any = lang === 'riddle' ? riddleGrammar : lang;
+---
+
+<div class={`code-block ${className}`}>
+  <Code
+    code={code.trim()}
+    lang={language}
+    themes={{ light: 'github-light-default', dark: 'github-dark-default' }}
+  />
+</div>
+
+<style>
+  .code-block {
+    overflow: hidden;
+  }
+</style>

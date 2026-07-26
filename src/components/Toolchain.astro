@@ -1,0 +1,94 @@
+---
+import Icon from './Icon.astro';
+import SectionHead from './SectionHead.astro';
+import { inline } from '../lib/inline';
+import type { SiteContent } from '../i18n';
+
+interface Props {
+  t: SiteContent;
+}
+
+const { t } = Astro.props;
+---
+
+<section id="toolchain" class="section border-t border-line bg-surface/45">
+  <div class="shell">
+    <SectionHead
+      eyebrow={t.toolchain.eyebrow}
+      title={t.toolchain.title}
+      subtitle={t.toolchain.subtitle}
+    />
+
+    <article
+      class="reveal mt-14 grid min-w-0 gap-8 rounded-[var(--radius-card)] border border-brand/25 bg-bg p-7 sm:p-9 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-12"
+    >
+      <div class="min-w-0">
+        <div class="flex items-baseline gap-3">
+          <h3 class="font-mono text-[19px] font-semibold tracking-tight text-brand">
+            {t.toolchain.manager.name}
+          </h3>
+          <p class="text-[13px] text-muted">{t.toolchain.manager.tagline}</p>
+        </div>
+        <p
+          class="mt-4 text-[15px] leading-relaxed text-ink/85"
+          set:html={inline(t.toolchain.manager.desc)}
+        />
+        {
+          t.toolchain.manager.usage && (
+            <p class="scroll-thin mt-5 overflow-x-auto rounded-lg bg-code px-3 py-2 font-mono text-[12.5px] whitespace-pre text-muted">
+              {t.toolchain.manager.usage}
+            </p>
+          )
+        }
+        <a
+          class="mt-6 inline-flex items-center gap-1.5 text-[14px] font-medium text-brand transition-opacity hover:opacity-70"
+          href={t.toolchain.manager.link.href}
+        >
+          {t.toolchain.manager.link.label}
+          <Icon name="external" size={14} />
+        </a>
+      </div>
+
+      <ul class="grid min-w-0 gap-3 self-center sm:grid-cols-2 sm:gap-x-8">
+        {
+          t.toolchain.manager.points.map((point) => (
+            <li class="flex gap-2.5 text-[13.5px] leading-relaxed text-muted">
+              <Icon name="dot" size={13} class="mt-[5px] shrink-0 text-brand" />
+              <span set:html={inline(point)} />
+            </li>
+          ))
+        }
+      </ul>
+    </article>
+
+    <div class="mt-5 grid gap-5 lg:grid-cols-3">
+      {
+        t.toolchain.items.map((item, index) => (
+          <article
+            class="reveal flex min-w-0 flex-col rounded-[var(--radius-card)] border border-line bg-bg p-7 transition-[border-color,transform] duration-300 hover:-translate-y-0.5 hover:border-brand/40"
+            style={`transition-delay:${index * 80}ms`}
+          >
+            <h3 class="font-mono text-[17px] font-semibold tracking-tight text-brand">
+              {item.name}
+            </h3>
+            <p class="mt-1 text-[13px] text-muted">{item.tagline}</p>
+            <p class="mt-4 text-[14px] leading-relaxed text-ink/85" set:html={inline(item.desc)} />
+            {item.usage && (
+              <p class="scroll-thin mt-4 overflow-x-auto rounded-lg bg-code px-3 py-2 font-mono text-[12.5px] whitespace-pre text-muted">
+                {item.usage}
+              </p>
+            )}
+            <ul class="mt-6 space-y-2.5 border-t border-line pt-5">
+              {item.points.map((point) => (
+                <li class="flex gap-2.5 text-[13.5px] leading-relaxed text-muted">
+                  <Icon name="check" size={14} class="mt-[3px] shrink-0 text-brand" />
+                  <span set:html={inline(point)} />
+                </li>
+              ))}
+            </ul>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

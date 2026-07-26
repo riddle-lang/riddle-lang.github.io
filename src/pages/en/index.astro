@@ -1,0 +1,27 @@
+---
+import Base from '../../layouts/Base.astro';
+import Hero from '../../components/Hero.astro';
+import FeatureShowcase from '../../components/FeatureShowcase.astro';
+import Pipeline from '../../components/Pipeline.astro';
+import Runtime from '../../components/Runtime.astro';
+import Toolchain from '../../components/Toolchain.astro';
+import Editors from '../../components/Editors.astro';
+import QuickStart from '../../components/QuickStart.astro';
+import Status from '../../components/Status.astro';
+import CTA from '../../components/CTA.astro';
+import { content } from '../../i18n';
+
+const t = content.en;
+---
+
+<Base t={t}>
+  <Hero t={t} />
+  <FeatureShowcase t={t} />
+  <Pipeline t={t} />
+  <Runtime t={t} />
+  <Toolchain t={t} />
+  <Editors t={t} />
+  <QuickStart t={t} />
+  <Status t={t} />
+  <CTA t={t} />
+</Base>

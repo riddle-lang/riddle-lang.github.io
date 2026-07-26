@@ -1,0 +1,43 @@
+---
+import Icon from './Icon.astro';
+import type { SiteContent } from '../i18n';
+
+interface Props {
+  t: SiteContent;
+}
+
+const { t } = Astro.props;
+
+const PLAYGROUND = 'https://riddle-lang.github.io/playground/';
+const DOCS = 'https://riddle-lang.github.io/docs/';
+---
+
+<section class="relative overflow-hidden border-t border-line">
+  <div class="cta-glow" aria-hidden="true"></div>
+
+  <div class="shell relative py-[clamp(88px,13vh,150px)] text-center">
+    <img src="/logo.svg" alt="" width="56" height="56" class="reveal mx-auto size-14" />
+    <h2 class="headline reveal mt-7 text-[clamp(2rem,4.6vw,3.1rem)]">{t.cta.title}</h2>
+    <p class="reveal mx-auto mt-4 max-w-xl text-[clamp(1rem,1.5vw,1.15rem)] text-muted">
+      {t.cta.subtitle}
+    </p>
+    <div class="reveal mt-9 flex flex-wrap items-center justify-center gap-3">
+      <a href={PLAYGROUND} class="btn btn-primary">
+        {t.cta.primary}
+        <Icon name="arrow" size={16} />
+      </a>
+      <a href={DOCS} class="btn btn-ghost">{t.cta.secondary}</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta-glow {
+    position: absolute;
+    inset-inline: 0;
+    bottom: -55%;
+    height: 105%;
+    background: radial-gradient(46% 52% at 50% 55%, var(--c-glow) 0%, transparent 70%);
+    pointer-events: none;
+  }
+</style>

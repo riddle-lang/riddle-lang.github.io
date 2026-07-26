@@ -1,0 +1,119 @@
+---
+import CodePane from './CodePane.astro';
+import Icon from './Icon.astro';
+import type { SiteContent } from '../i18n';
+
+interface Props {
+  t: SiteContent;
+}
+
+const { t } = Astro.props;
+
+const PLAYGROUND = 'https://riddle-lang.github.io/playground/';
+const DOCS = 'https://riddle-lang.github.io/docs/';
+---
+
+<section class="relative overflow-hidden pb-[clamp(72px,10vh,120px)] pt-[clamp(56px,9vh,110px)]">
+  <div class="hero-glow" aria-hidden="true"></div>
+
+  <div class="shell relative">
+    <div class="mx-auto max-w-3xl text-center">
+      <p class="reveal">
+        <a
+          href="https://github.com/riddle-lang/riddle/releases"
+          class="inline-flex items-center gap-2 rounded-full border border-line bg-surface/60 px-3.5 py-1.5 text-[13px] text-muted transition-colors hover:text-ink"
+        >
+          <span class="size-1.5 rounded-full bg-brand"></span>
+          {t.hero.badge}
+          <Icon name="arrow" size={13} />
+        </a>
+      </p>
+
+      <h1
+        class="headline reveal mt-7 text-[clamp(2.6rem,7.2vw,4.75rem)]"
+        style="transition-delay:60ms"
+      >
+        {t.hero.title}<br class="hidden sm:block" /><span class="hero-accent"
+          >{t.hero.titleAccent}</span
+        >
+      </h1>
+
+      <p
+        class="reveal mx-auto mt-6 max-w-[46rem] text-[clamp(1.02rem,1.7vw,1.25rem)] leading-[1.65] text-muted"
+        style="transition-delay:120ms"
+      >
+        {t.hero.subtitle}
+      </p>
+
+      <div
+        class="reveal mt-9 flex flex-wrap items-center justify-center gap-3"
+        style="transition-delay:180ms"
+      >
+        <a href={PLAYGROUND} class="btn btn-primary">
+          {t.hero.ctaPrimary}
+          <Icon name="arrow" size={16} />
+        </a>
+        <a href={DOCS} class="btn btn-ghost">{t.hero.ctaSecondary}</a>
+      </div>
+    </div>
+
+    <div class="reveal mx-auto mt-14 max-w-[38rem]" style="transition-delay:240ms">
+      <CodePane
+        code={t.hero.code}
+        file={t.hero.codeFile}
+        copyLabel={t.a11y.copy}
+        copiedLabel={t.a11y.copied}
+        class="shadow-[0_24px_70px_-30px_rgba(0,0,0,0.55)]"
+      />
+    </div>
+
+    <dl
+      class="reveal mx-auto mt-14 grid max-w-4xl grid-cols-2 gap-x-6 gap-y-8 border-t border-line pt-10 md:grid-cols-4"
+      style="transition-delay:300ms"
+    >
+      {
+        t.hero.stats.map((stat) => (
+          <div class="text-center">
+            <dt class="sr-only">{stat.label}</dt>
+            <dd>
+              <span class="block text-[clamp(2rem,3.4vw,2.6rem)] font-semibold tracking-tight text-brand">
+                {stat.value}
+              </span>
+              <span class="mt-1.5 block text-[13px] text-muted">{stat.label}</span>
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+</section>
+
+<style>
+  .hero-glow {
+    position: absolute;
+    inset-inline: 0;
+    top: -32%;
+    height: 78%;
+    background: radial-gradient(
+      52% 60% at 50% 40%,
+      var(--c-glow) 0%,
+      color-mix(in oklab, var(--c-glow) 35%, transparent) 45%,
+      transparent 72%
+    );
+    pointer-events: none;
+    filter: blur(6px);
+  }
+
+  .hero-accent {
+    background: linear-gradient(96deg, #00a1d6 0%, #48c7f0 52%, #005670 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  :global(html:not(.dark)) .hero-accent {
+    background: linear-gradient(96deg, #007ea8 0%, #00a1d6 55%, #005670 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+</style>

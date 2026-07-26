@@ -1,0 +1,70 @@
+---
+import CodeBlock from './CodeBlock.astro';
+import Icon from './Icon.astro';
+
+interface Props {
+  code: string;
+  lang?: string;
+  file?: string;
+  copyLabel: string;
+  copiedLabel: string;
+  class?: string;
+  /** show the three traffic-light dots */
+  chrome?: boolean;
+}
+
+const {
+  code,
+  lang = 'riddle',
+  file,
+  copyLabel,
+  copiedLabel,
+  class: className = '',
+  chrome = true,
+} = Astro.props;
+---
+
+<figure
+  class:list={[
+    'group relative overflow-hidden rounded-[var(--radius-card)] border border-line bg-code',
+    !chrome && !file && 'is-bare',
+    className,
+  ]}
+  data-code-pane
+>
+  {
+    (chrome || file) && (
+      <figcaption class="flex items-center gap-3 border-b border-line px-4 py-2.5">
+        {chrome && (
+          <span class="flex shrink-0 gap-1.5" aria-hidden="true">
+            <span class="size-2.5 rounded-full bg-muted/25" />
+            <span class="size-2.5 rounded-full bg-muted/25" />
+            <span class="size-2.5 rounded-full bg-muted/25" />
+          </span>
+        )}
+        {file && <span class="font-mono text-xs tracking-tight text-muted">{file}</span>}
+      </figcaption>
+    )
+  }
+
+  <CodeBlock code={code} lang={lang} />
+
+  <button
+    type="button"
+    class="absolute end-2.5 top-2 inline-flex items-center gap-1.5 rounded-full border border-line bg-raised/80 px-2.5 py-1 text-xs text-muted opacity-0 backdrop-blur transition hover:text-ink focus-visible:opacity-100 group-hover:opacity-100"
+    data-copy
+    data-copy-label={copyLabel}
+    data-copied-label={copiedLabel}
+    aria-label={copyLabel}
+  >
+    <Icon name="copy" size={13} />
+    <span data-copy-text>{copyLabel}</span>
+  </button>
+</figure>
+
+<style>
+  /* Without the caption bar the copy button would sit on the first line. */
+  .is-bare :global(.astro-code) {
+    padding-top: 36px;
+  }
+</style>

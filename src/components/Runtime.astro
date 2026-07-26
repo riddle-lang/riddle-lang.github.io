@@ -1,0 +1,55 @@
+---
+import CodePane from './CodePane.astro';
+import SectionHead from './SectionHead.astro';
+import { inline } from '../lib/inline';
+import type { SiteContent } from '../i18n';
+
+interface Props {
+  t: SiteContent;
+}
+
+const { t } = Astro.props;
+---
+
+<section id="runtime" class="section">
+  <div class="shell">
+    <SectionHead
+      eyebrow={t.runtime.eyebrow}
+      title={t.runtime.title}
+      subtitle={t.runtime.subtitle}
+    />
+
+    <div class="mt-12 grid items-start gap-10 lg:grid-cols-[1fr_1.05fr] lg:gap-14">
+      <div class="reveal min-w-0">
+        <CodePane
+          code={t.runtime.code}
+          lang="c"
+          file="rgc.h"
+          copyLabel={t.a11y.copy}
+          copiedLabel={t.a11y.copied}
+        />
+        <p
+          class="mt-3 text-[13px] leading-relaxed text-muted"
+          set:html={inline(t.runtime.caption)}
+        />
+      </div>
+
+      <dl class="grid min-w-0 gap-7 sm:grid-cols-2 lg:grid-cols-1">
+        {
+          t.runtime.points.map((point, index) => (
+            <div
+              class="reveal border-s-2 border-line ps-5 transition-colors duration-300 hover:border-brand"
+              style={`transition-delay:${index * 70}ms`}
+            >
+              <dt class="text-[15px] font-medium tracking-tight">{point.title}</dt>
+              <dd
+                class="mt-1.5 text-[14px] leading-relaxed text-muted"
+                set:html={inline(point.desc)}
+              />
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </div>
+</section>

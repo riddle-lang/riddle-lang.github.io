@@ -1,0 +1,153 @@
+---
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import type { SiteContent } from '../i18n';
+
+interface Props {
+  t: SiteContent;
+}
+
+const { t } = Astro.props;
+
+const site = Astro.site ?? new URL('https://riddle-lang.github.io');
+const canonical = new URL(t.dir.self, site).href;
+const zhHref = new URL('/', site).href;
+const enHref = new URL('/en/', site).href;
+const ogImage = new URL('/og.png', site).href;
+---
+
+<!doctype html>
+<html lang={t.htmlLang} class="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{t.meta.title}</title>
+    <meta name="description" content={t.meta.description} />
+    <link rel="canonical" href={canonical} />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#0a0a0b" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+
+    <link rel="alternate" hreflang="zh-Hans" href={zhHref} />
+    <link rel="alternate" hreflang="en" href={enHref} />
+    <link rel="alternate" hreflang="x-default" href={zhHref} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Riddle" />
+    <meta property="og:locale" content={t.locale === 'zh' ? 'zh_CN' : 'en_US'} />
+    <meta property="og:title" content={t.meta.title} />
+    <meta property="og:description" content={t.meta.description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={t.meta.ogAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={t.meta.title} />
+    <meta name="twitter:description" content={t.meta.description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <link rel="preload" href="/fonts/MapleMono-Medium.woff2" as="font" type="font/woff2" crossorigin />
+
+    <script is:inline>
+      // Applied before first paint so the page never flashes the wrong theme,
+      // and so scroll-reveal only hides content when scripts can reveal it again.
+      (() => {
+        document.documentElement.classList.add('js');
+        try {
+          const stored = localStorage.getItem('riddle-theme');
+          const dark = stored
+            ? stored === 'dark'
+            : !window.matchMedia('(prefers-color-scheme: light)').matches;
+          document.documentElement.classList.toggle('dark', dark);
+        } catch {
+          /* localStorage unavailable — keep the default dark class */
+        }
+      })();
+    </script>
+  </head>
+
+  <body>
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:start-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-brand focus:px-4 focus:py-2 focus:text-white"
+    >
+      {t.a11y.skipToContent}
+    </a>
+
+    <Nav t={t} />
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <Footer t={t} />
+
+    <script>
+      // ---------------------------------------------------------- theme
+      const root = document.documentElement;
+      for (const button of document.querySelectorAll<HTMLElement>('[data-theme-toggle]')) {
+        button.addEventListener('click', () => {
+          const dark = !root.classList.contains('dark');
+          root.classList.toggle('dark', dark);
+          try {
+            localStorage.setItem('riddle-theme', dark ? 'dark' : 'light');
+          } catch {
+            /* ignore */
+          }
+        });
+      }
+
+      // --------------------------------------------------------- reveal
+      const reveals = document.querySelectorAll<HTMLElement>('.reveal');
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (reduced || !('IntersectionObserver' in window)) {
+        reveals.forEach((element) => element.classList.add('is-in'));
+      } else {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              entry.target.classList.add('is-in');
+              observer.unobserve(entry.target);
+            }
+          },
+          { rootMargin: '0px 0px -12% 0px', threshold: 0.08 }
+        );
+        reveals.forEach((element) => observer.observe(element));
+      }
+
+      // ------------------------------------------------------ nav state
+      const nav = document.querySelector<HTMLElement>('[data-nav]');
+      if (nav) {
+        const onScroll = () => nav.classList.toggle('is-scrolled', window.scrollY > 8);
+        onScroll();
+        window.addEventListener('scroll', onScroll, { passive: true });
+      }
+
+      // ----------------------------------------------------------- copy
+      for (const button of document.querySelectorAll<HTMLButtonElement>('[data-copy]')) {
+        button.addEventListener('click', async () => {
+          const pane = button.closest('[data-code-pane]');
+          const source = pane?.querySelector('pre')?.textContent ?? '';
+          const label = button.querySelector<HTMLElement>('[data-copy-text]');
+          try {
+            await navigator.clipboard.writeText(source);
+            if (label) {
+              label.textContent = button.dataset.copiedLabel ?? 'Copied';
+              window.setTimeout(() => {
+                label.textContent = button.dataset.copyLabel ?? 'Copy';
+              }, 1600);
+            }
+          } catch {
+            /* clipboard blocked — leave the label alone */
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

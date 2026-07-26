@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://riddle-lang.github.io/sitemap-index.xml

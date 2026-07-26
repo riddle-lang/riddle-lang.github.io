@@ -1,0 +1,74 @@
+---
+import Icon from './Icon.astro';
+import SectionHead from './SectionHead.astro';
+import { inline } from '../lib/inline';
+import type { SiteContent } from '../i18n';
+
+interface Props {
+  t: SiteContent;
+}
+
+const { t } = Astro.props;
+---
+
+<section id="editors" class="section">
+  <div class="shell">
+    <SectionHead
+      eyebrow={t.editors.eyebrow}
+      title={t.editors.title}
+      subtitle={t.editors.subtitle}
+    />
+
+    <ul class="reveal mt-10 flex flex-wrap gap-2.5">
+      {
+        t.editors.list.map((editor) => (
+          <li class="rounded-full border border-line px-4 py-1.5 text-[13.5px] text-muted">
+            {editor}
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="mt-12 grid gap-5 lg:grid-cols-[1.55fr_1fr]">
+      <div class="reveal rounded-[var(--radius-card)] border border-line bg-surface/50 p-7">
+        <h3 class="flex items-center gap-2 text-[15px] font-medium tracking-tight">
+          <Icon name="check" size={16} class="text-brand" />
+          {t.editors.haveTitle}
+        </h3>
+        <ul class="mt-5 grid gap-2.5 sm:grid-cols-2">
+          {
+            t.editors.have.map((row) => (
+              <li class="flex gap-2.5 text-[13.5px] leading-relaxed text-muted">
+                <span class="mt-[7px] size-1 shrink-0 rounded-full bg-brand" aria-hidden="true" />
+                <span set:html={inline(row)} />
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div
+        class="reveal rounded-[var(--radius-card)] border border-dashed border-line p-7"
+        style="transition-delay:90ms"
+      >
+        <h3 class="flex items-center gap-2 text-[15px] font-medium tracking-tight text-muted">
+          <Icon name="close" size={16} />
+          {t.editors.missTitle}
+        </h3>
+        <ul class="mt-5 space-y-2.5">
+          {
+            t.editors.miss.map((row) => (
+              <li class="flex gap-2.5 text-[13.5px] leading-relaxed text-muted/80">
+                <span
+                  class="mt-[7px] size-1 shrink-0 rounded-full bg-muted/50"
+                  aria-hidden="true"
+                />
+                <span set:html={inline(row)} />
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>

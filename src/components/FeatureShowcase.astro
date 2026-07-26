@@ -1,0 +1,316 @@
+---
+import CodePane from './CodePane.astro';
+import Icon from './Icon.astro';
+import type { IconName } from '../lib/icons';
+import SectionHead from './SectionHead.astro';
+import { inline } from '../lib/inline';
+import type { SiteContent } from '../i18n';
+
+interface Props {
+  t: SiteContent;
+}
+
+const { t } = Astro.props;
+const items = t.features.items;
+
+const ICONS: Record<string, IconName> = {
+  move: 'move',
+  escape: 'escape',
+  drop: 'drop',
+  traits: 'traits',
+  match: 'match',
+  ffi: 'ffi',
+};
+---
+
+<section id="features" class="section">
+  <div class="shell">
+    <SectionHead
+      eyebrow={t.features.eyebrow}
+      title={t.features.title}
+      subtitle={t.features.subtitle}
+    />
+
+    <div class="fs reveal mt-14" data-showcase>
+      <div class="fs-rail" role="tablist" aria-orientation="vertical" aria-label={t.features.title}>
+        {
+          items.map((item, index) => (
+            <button
+              type="button"
+              class="fs-tab"
+              style={`--i:${index}`}
+              role="tab"
+              id={`fs-tab-${item.id}`}
+              aria-controls={`fs-panel-${item.id}`}
+              aria-selected={index === 0 ? 'true' : 'false'}
+              tabindex={index === 0 ? 0 : -1}
+              data-index={index}
+            >
+              <span class="fs-tab-icon">
+                <Icon name={ICONS[item.id] ?? 'dot'} size={17} />
+              </span>
+              <span class="min-w-0">
+                <span class="block text-[15px] font-medium tracking-tight">{item.title}</span>
+                <span class="mt-1 block text-[13px] leading-snug text-muted">{item.summary}</span>
+              </span>
+            </button>
+          ))
+        }
+      </div>
+
+      <div class="fs-stage">
+        {
+          items.map((item, index) => (
+            <section
+              class:list={['fs-panel', index === 0 && 'is-active']}
+              style={`--i:${index}`}
+              role="tabpanel"
+              id={`fs-panel-${item.id}`}
+              aria-labelledby={`fs-tab-${item.id}`}
+              tabindex="0"
+            >
+              <h3 class="headline text-[clamp(1.4rem,2.4vw,1.85rem)]">{item.headline}</h3>
+              <p class="mt-3.5 max-w-[46rem] leading-relaxed text-muted">{item.body}</p>
+
+              <CodePane
+                code={item.code}
+                copyLabel={t.a11y.copy}
+                copiedLabel={t.a11y.copied}
+                class="mt-7"
+              />
+
+              {item.caption && (
+                <p class="mt-3 text-[13px] leading-relaxed text-muted" set:html={inline(item.caption)} />
+              )}
+
+              {item.bullets && (
+                <ul class="mt-6 space-y-3 border-t border-line pt-6">
+                  {item.bullets.map((bullet) => (
+                    <li class="flex gap-3 text-[14px] leading-relaxed text-muted">
+                      <Icon name="check" size={15} class="mt-1 shrink-0 text-brand" />
+                      <span set:html={inline(bullet)} />
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              {item.table && (
+                <div class="mt-6 overflow-hidden rounded-[var(--radius-card)] border border-line">
+                  <table class="w-full border-collapse text-start text-[13.5px]">
+                    <thead>
+                      <tr class="bg-surface">
+                        <th class="px-4 py-2.5 text-start font-medium">{item.table.head[0]}</th>
+                        <th class="px-4 py-2.5 text-start font-medium">{item.table.head[1]}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {item.table.rows.map((row) => (
+                        <tr class="border-t border-line">
+                          <td class="px-4 py-2.5 text-muted" set:html={inline(row[0])} />
+                          <td class="px-4 py-2.5 text-muted" set:html={inline(row[1])} />
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </section>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Mobile: `display: contents` lifts tabs and panels into one grid so that
+     `order` can interleave them into an accordion. Desktop restores the
+     two-column rail + stage layout. */
+  .fs {
+    display: grid;
+    /* minmax(0, …) keeps the code panes from widening the track past the
+       viewport — they scroll internally instead. */
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+  }
+
+  .fs-rail,
+  .fs-stage {
+    display: contents;
+  }
+
+  .fs-tab {
+    order: calc(var(--i) * 2);
+    min-width: 0;
+  }
+
+  .fs-panel {
+    order: calc(var(--i) * 2 + 1);
+    padding: 8px 4px 28px;
+    min-width: 0;
+  }
+
+  .fs-tab {
+    position: relative;
+    display: flex;
+    width: 100%;
+    align-items: flex-start;
+    gap: 12px;
+    border-radius: 12px;
+    padding: 13px 14px;
+    text-align: start;
+    color: var(--c-ink);
+    transition:
+      background-color 0.25s ease,
+      color 0.25s ease;
+  }
+
+  .fs-tab:hover {
+    background-color: color-mix(in oklab, var(--c-surface) 70%, transparent);
+  }
+
+  .fs-tab[aria-selected='true'] {
+    background-color: var(--c-surface);
+  }
+
+  .fs-tab[aria-selected='true']::before {
+    content: '';
+    position: absolute;
+    inset-block: 12px;
+    inset-inline-start: 0;
+    width: 2px;
+    border-radius: 2px;
+    background-color: var(--color-brand);
+  }
+
+  .fs-tab-icon {
+    display: grid;
+    height: 34px;
+    width: 34px;
+    flex-shrink: 0;
+    place-items: center;
+    border-radius: 10px;
+    border: 1px solid var(--c-line);
+    color: var(--c-muted);
+    transition:
+      color 0.25s ease,
+      border-color 0.25s ease,
+      background-color 0.25s ease;
+  }
+
+  .fs-tab[aria-selected='true'] .fs-tab-icon {
+    color: var(--color-brand);
+    border-color: color-mix(in oklab, #00a1d6 45%, var(--c-line));
+    background-color: color-mix(in oklab, #00a1d6 10%, transparent);
+  }
+
+  /* Only hide inactive panels once the enhancement script has run, so the
+     no-JS render still shows every panel. */
+  .fs.is-enhanced .fs-panel:not(.is-active) {
+    display: none;
+  }
+
+  .fs.is-enhanced .fs-panel.is-active {
+    animation: fs-enter 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes fs-enter {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .fs {
+      grid-template-columns: minmax(0, 34fr) minmax(0, 62fr);
+      column-gap: clamp(28px, 4vw, 56px);
+      align-items: start;
+    }
+
+    .fs-rail {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      position: sticky;
+      top: 84px;
+    }
+
+    .fs-stage {
+      display: block;
+      min-height: 34rem;
+    }
+
+    .fs-tab,
+    .fs-panel {
+      order: 0;
+    }
+
+    .fs-panel {
+      padding: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fs.is-enhanced .fs-panel.is-active {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  const showcase = document.querySelector<HTMLElement>('[data-showcase]');
+
+  if (showcase) {
+    const tabs = [...showcase.querySelectorAll<HTMLButtonElement>('.fs-tab')];
+    const panels = [...showcase.querySelectorAll<HTMLElement>('.fs-panel')];
+
+    // Signals to CSS that inactive panels may now be hidden.
+    showcase.classList.add('is-enhanced');
+
+    const select = (index: number, focus = false) => {
+      tabs.forEach((tab, i) => {
+        const active = i === index;
+        tab.setAttribute('aria-selected', String(active));
+        tab.tabIndex = active ? 0 : -1;
+      });
+      panels.forEach((panel, i) => panel.classList.toggle('is-active', i === index));
+      if (focus) tabs[index]?.focus();
+    };
+
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => select(index));
+
+      tab.addEventListener('keydown', (event) => {
+        const last = tabs.length - 1;
+        let next: number | null = null;
+
+        switch (event.key) {
+          case 'ArrowDown':
+          case 'ArrowRight':
+            next = index === last ? 0 : index + 1;
+            break;
+          case 'ArrowUp':
+          case 'ArrowLeft':
+            next = index === 0 ? last : index - 1;
+            break;
+          case 'Home':
+            next = 0;
+            break;
+          case 'End':
+            next = last;
+            break;
+        }
+
+        if (next !== null) {
+          event.preventDefault();
+          select(next, true);
+        }
+      });
+    });
+  }
+</script>

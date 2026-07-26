@@ -1,0 +1,158 @@
+---
+import Icon from './Icon.astro';
+import type { SiteContent } from '../i18n';
+
+interface Props {
+  t: SiteContent;
+}
+
+const { t } = Astro.props;
+
+const DOCS = 'https://riddle-lang.github.io/docs/';
+const PLAYGROUND = 'https://riddle-lang.github.io/playground/';
+const REPO = 'https://github.com/riddle-lang/riddle';
+---
+
+<header
+  class="sticky top-0 z-50 border-b border-transparent transition-[background-color,border-color,backdrop-filter] duration-300"
+  data-nav
+>
+  <nav class="shell flex h-13 items-center gap-3" aria-label={t.meta.ogAlt}>
+    <a
+      href={t.dir.self}
+      class="flex shrink-0 items-center gap-2 text-[15px] font-semibold tracking-tight"
+    >
+      <img src="/logo.svg" alt="" width="26" height="26" class="size-[26px]" />
+      <span>Riddle</span>
+    </a>
+
+    <ul class="ms-4 hidden items-center gap-1 lg:flex">
+      {
+        t.nav.links.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              class="rounded-full px-3 py-1.5 text-[13px] text-muted transition-colors hover:text-ink"
+            >
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="ms-auto flex items-center gap-1">
+      <a
+        href={DOCS}
+        class="hidden rounded-full px-3 py-1.5 text-[13px] text-muted transition-colors hover:text-ink sm:inline-block"
+      >
+        {t.nav.docs}
+      </a>
+      <a
+        href={PLAYGROUND}
+        class="hidden rounded-full px-3 py-1.5 text-[13px] text-muted transition-colors hover:text-ink sm:inline-block"
+      >
+        {t.nav.playground}
+      </a>
+
+      <a
+        href={REPO}
+        class="grid size-8 place-items-center rounded-full text-muted transition-colors hover:text-ink"
+        aria-label={t.nav.github}
+      >
+        <Icon name="github" size={17} />
+      </a>
+
+      <a
+        href={t.dir.other}
+        class="grid h-8 min-w-8 place-items-center rounded-full px-2 text-[12px] font-medium text-muted transition-colors hover:text-ink"
+        title={t.dir.otherTitle}
+        hreflang={t.locale === 'zh' ? 'en' : 'zh-Hans'}
+      >
+        {t.dir.otherLabel}
+      </a>
+
+      <button
+        type="button"
+        class="grid size-8 place-items-center rounded-full text-muted transition-colors hover:text-ink"
+        data-theme-toggle
+        aria-label={t.a11y.toggleTheme}
+      >
+        <Icon name="sun" size={17} class="hidden dark:block" />
+        <Icon name="moon" size={17} class="block dark:hidden" />
+      </button>
+
+      <button
+        type="button"
+        class="grid size-8 place-items-center rounded-full text-muted transition-colors hover:text-ink lg:hidden"
+        data-nav-toggle
+        aria-expanded="false"
+        aria-controls="nav-mobile"
+        aria-label={t.a11y.openMenu}
+      >
+        <Icon name="menu" size={18} />
+      </button>
+    </div>
+  </nav>
+
+  <div
+    id="nav-mobile"
+    class="grid grid-rows-[0fr] overflow-hidden border-line transition-[grid-template-rows] duration-300 ease-[cubic-bezier(.16,1,.3,1)] lg:hidden"
+    data-nav-panel
+  >
+    <div class="min-h-0">
+      <ul class="shell flex flex-col gap-0.5 border-t border-line py-3">
+        {
+          [
+            ...t.nav.links,
+            { label: t.nav.docs, href: DOCS },
+            { label: t.nav.playground, href: PLAYGROUND },
+          ].map((link) => (
+            <li>
+              <a href={link.href} class="block rounded-lg px-2 py-2.5 text-[15px] text-ink">
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</header>
+
+<style>
+  [data-nav].is-scrolled {
+    background-color: color-mix(in oklab, var(--c-bg) 72%, transparent);
+    border-bottom-color: var(--c-line);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+  }
+
+  [data-nav]:has([data-nav-panel].is-open) {
+    background-color: var(--c-bg);
+    border-bottom-color: var(--c-line);
+  }
+
+  [data-nav-panel].is-open {
+    grid-template-rows: 1fr;
+  }
+</style>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('[data-nav-toggle]');
+  const panel = document.querySelector<HTMLElement>('[data-nav-panel]');
+
+  if (toggle && panel) {
+    toggle.addEventListener('click', () => {
+      const open = panel.classList.toggle('is-open');
+      toggle.setAttribute('aria-expanded', String(open));
+    });
+
+    for (const link of panel.querySelectorAll('a')) {
+      link.addEventListener('click', () => {
+        panel.classList.remove('is-open');
+        toggle.setAttribute('aria-expanded', 'false');
+      });
+    }
+  }
+</script>
