@@ -60,7 +60,7 @@ fun main() {
 }`,
     stats: [
       { value: '0', label: 'lifetime annotations' },
-      { value: '3', label: 'runtime ABI functions' },
+      { value: '5', label: 'runtime ABI functions' },
       { value: '9', label: 'compiler stages' },
       { value: 'C11', label: 'backend output' },
     ],
@@ -242,14 +242,16 @@ fun main() {
   },
   runtime: {
     eyebrow: 'Runtime',
-    title: 'Three functions. That is the entire runtime.',
+    title: 'Five functions make up the runtime ABI.',
     subtitle:
-      'The C that Riddle generates depends on exactly these three symbols. Replace them and you have replaced the whole memory strategy.',
+      'Every runtime provider implements these five symbols: initialize the stack, allocate, resize and free memory, and trigger collection.',
     code: `void rgc_init(void *stack_bottom);
 void *rgc_alloc(size_t size);
+void *rgc_realloc(void *ptr, size_t size);
+void rgc_free(void *ptr);
 void rgc_collect(void);`,
     caption:
-      '`crates/gc` ships the default implementation; point `[runtime].source` in `Clue.toml` at your own to swap it out.',
+      '`crates/gc` ships the default conservative, non-moving mark-sweep implementation; point `[runtime].source` in `Clue.toml` at your own provider to replace it.',
     points: [
       {
         title: 'No Boehm GC',
@@ -260,8 +262,36 @@ void rgc_collect(void);`,
         desc: 'Only values that escape analysis proves outlive the current frame reach the GC heap. Everything else stays on the stack, and the collector never relocates objects.',
       },
       {
+        title: 'Each allocation hook has a job',
+        desc: '`rgc_realloc` grows `Vector` buffers and `rgc_free` releases provider-owned memory; a non-GC provider may ignore the stack bottom and make `rgc_collect` a no-op.',
+      },
+      {
         title: 'Fully replaceable',
         desc: 'The runtime provider is chosen by `clue` and accepts custom providers — embedded or specialised targets can bring their own allocator.',
+      },
+    ],
+  },
+  release: {
+    eyebrow: 'What\'s new in v0.2.0',
+    title: 'From the language core to a complete toolchain',
+    subtitle:
+      'This release moves Riddle beyond a host-only compiler toward cross-target builds and a complete editor-ready development experience.',
+    items: [
+      {
+        title: 'Seven target platforms',
+        desc: '`clue` and `riddlec` now build for a selected target triple, with runtime components for all seven supported targets.',
+      },
+      {
+        title: 'Project-aware editing',
+        desc: 'The LSP now provides project-aware diagnostics, completion, semantic tokens, inlay hints and code actions across Helix, VS Code, Zed and IntelliJ IDEA.',
+      },
+      {
+        title: 'A broader language and standard library',
+        desc: 'Generics, traits, closures, operator overloading and deterministic `Drop` now work end to end, alongside arrays, slices, strings and Vector.',
+      },
+      {
+        title: 'A five-function runtime ABI',
+        desc: 'The C backend uses a replaceable five-function ABI; the bundled conservative non-moving GC needs no external collector.',
       },
     ],
   },

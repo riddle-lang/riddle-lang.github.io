@@ -60,7 +60,7 @@ fun main() {
 }`,
     stats: [
       { value: '0', label: '生命周期标注' },
-      { value: '3', label: '个运行时 ABI 函数' },
+      { value: '5', label: '个运行时 ABI 函数' },
       { value: '9', label: '个编译阶段' },
       { value: 'C11', label: '后端输出' },
     ],
@@ -226,12 +226,14 @@ fun main() {
   },
   runtime: {
     eyebrow: '运行时',
-    title: '三个函数，就是整个运行时',
-    subtitle: 'Riddle 生成的 C 代码只依赖这三个符号。换掉它们，就换掉了整套内存策略。',
+    title: '五个函数，组成整个运行时 ABI',
+    subtitle: '每个 runtime provider 都要实现这五个符号：初始化栈、分配、调整和释放内存，以及触发回收。',
     code: `void rgc_init(void *stack_bottom);
 void *rgc_alloc(size_t size);
+void *rgc_realloc(void *ptr, size_t size);
+void rgc_free(void *ptr);
 void rgc_collect(void);`,
-    caption: '`crates/gc` 提供默认实现；也可以在 `Clue.toml` 的 `[runtime].source` 指向自己的实现。',
+    caption: '`crates/gc` 提供默认的非移动、保守式 mark-sweep 实现；也可以在 `Clue.toml` 的 `[runtime].source` 指向自己的 provider。',
     points: [
       {
         title: '不依赖 Boehm GC',
@@ -242,8 +244,35 @@ void rgc_collect(void);`,
         desc: '只有逃逸分析判定会越过当前栈帧的值才进入 GC 堆；其余值留在栈上，回收器不移动对象。',
       },
       {
+        title: '分配接口各司其职',
+        desc: '`rgc_realloc` 为 `Vector` 扩容，`rgc_free` 释放 provider 管理的内存；没有 GC 的 provider 也可以忽略栈底并把 `rgc_collect` 实现为空操作。',
+      },
+      {
         title: '完全可替换',
         desc: '运行时 provider 由 `clue` 选择，也接受自定义 provider——嵌入式或特殊场景可以自带分配器。',
+      },
+    ],
+  },
+  release: {
+    eyebrow: 'v0.2.0 新内容',
+    title: '从语言核心到完整工具链',
+    subtitle: '这一版把 Riddle 从单机编译器向可跨目标构建、可在编辑器中使用的完整开发体验推进了一步。',
+    items: [
+      {
+        title: '七个目标平台',
+        desc: '`clue` 与 `riddlec` 支持按 target triple 构建，七个受支持目标都有对应的 runtime 组件。',
+      },
+      {
+        title: '项目级编辑体验',
+        desc: 'LSP 现在提供项目级诊断、补全、语义 Token、Inlay Hint 与 Code Action，并覆盖 Helix、VS Code、Zed 和 IntelliJ IDEA。',
+      },
+      {
+        title: '更完整的语言与标准库',
+        desc: '泛型、trait、闭包、运算符重载与确定性 `Drop` 已连通，数组、切片、字符串和 Vector 也进入标准库。',
+      },
+      {
+        title: '五函数运行时 ABI',
+        desc: 'C 后端使用可替换的五函数 ABI；默认保守式非移动 GC 随工具链提供，不依赖外部 GC。',
       },
     ],
   },

@@ -1,0 +1,42 @@
+---
+import SectionHead from './SectionHead.astro';
+import { inline } from '../lib/inline';
+import type { SiteContent } from '../i18n';
+
+interface Props {
+  t: SiteContent;
+}
+
+const { t } = Astro.props;
+---
+
+<section id="release" class="section border-t border-line bg-surface/45">
+  <div class="shell">
+    <SectionHead
+      eyebrow={t.release.eyebrow}
+      title={t.release.title}
+      subtitle={t.release.subtitle}
+    />
+
+    <ol class="mt-14 grid gap-px overflow-hidden rounded-[var(--radius-card)] border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
+      {
+        t.release.items.map((item, index) => (
+          <li
+            class="reveal group relative bg-bg p-6 transition-colors duration-300 hover:bg-surface"
+            style={`transition-delay:${index * 45}ms`}
+          >
+            <span class="font-mono text-[13px] tabular-nums text-brand">
+              {String(index + 1).padStart(2, '0')}
+            </span>
+            <h3 class="mt-3 text-[16px] font-medium tracking-tight">{item.title}</h3>
+            <p class="mt-2 text-[13.5px] leading-relaxed text-muted" set:html={inline(item.desc)} />
+            <span
+              class="absolute inset-x-0 bottom-0 h-px scale-x-0 bg-brand transition-transform duration-400 ease-[cubic-bezier(.16,1,.3,1)] group-hover:scale-x-100"
+              aria-hidden="true"
+            />
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>

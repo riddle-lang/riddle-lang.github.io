@@ -93,6 +93,12 @@ export interface SiteContent {
     caption: string;
     points: { title: string; desc: string }[];
   };
+  release: {
+    eyebrow: string;
+    title: string;
+    subtitle: string;
+    items: { title: string; desc: string }[];
+  };
   toolchain: {
     eyebrow: string;
     title: string;
