@@ -1,0 +1,56 @@
+---
+import SectionHead from './SectionHead.astro';
+import { inline } from '../lib/inline';
+import type { SiteContent } from '../i18n';
+
+interface Props {
+  t: SiteContent;
+}
+
+const { t } = Astro.props;
+---
+
+<section id="diagnostics" class="section">
+  <div class="shell">
+    <SectionHead
+      eyebrow={t.diagnostics.eyebrow}
+      title={t.diagnostics.title}
+      subtitle={t.diagnostics.subtitle}
+    />
+
+    <div class="mt-14 space-y-5">
+      {
+        t.diagnostics.cases.map((item, index) => (
+          <figure
+            class="reveal overflow-hidden rounded-[var(--radius-card)] border border-line bg-code"
+            style={`transition-delay:${index * 60}ms`}
+          >
+            <figcaption class="flex flex-wrap items-center gap-x-3 gap-y-1 border-b border-line px-4 py-2.5">
+              <span class="rounded-full bg-brand/12 px-2 py-0.5 font-mono text-[11.5px] tracking-tight text-brand">
+                {item.code}
+              </span>
+              <span class="text-[13px] text-muted" set:html={inline(item.title, t.glossary)} />
+              <span class="ms-auto flex shrink-0 gap-1.5" aria-hidden="true">
+                <span class="size-2.5 rounded-full bg-muted/25" />
+                <span class="size-2.5 rounded-full bg-muted/25" />
+                <span class="size-2.5 rounded-full bg-muted/25" />
+              </span>
+            </figcaption>
+            <pre
+              class="overflow-x-auto p-4 font-mono text-[12.5px] leading-relaxed text-ink/85"
+              tabindex="0"
+            ><code>{item.output}</code></pre>
+          </figure>
+        ))
+      }
+    </div>
+
+    <p class="mt-8 max-w-2xl text-[13.5px] leading-relaxed text-muted">
+      <span set:html={inline(t.diagnostics.footnote, t.glossary)} />
+      <a
+        class="ms-1 text-brand underline decoration-brand/40 underline-offset-4 transition-colors hover:decoration-brand"
+        href={t.diagnostics.link.href}>{t.diagnostics.link.label}</a
+      >
+    </p>
+  </div>
+</section>

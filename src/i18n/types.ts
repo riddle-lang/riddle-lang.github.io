@@ -30,6 +30,111 @@ export interface ToolchainEntry {
   points: string[];
 }
 
+export interface Chapter {
+  /** anchor id, e.g. "language" */
+  id: string;
+  /** short label in the sticky chapter nav */
+  label: string;
+  /** one line shown on the chapter divider */
+  blurb: string;
+}
+
+export interface DiagnosticsCase {
+  /** error code, e.g. "E0300" */
+  code: string;
+  /** one-line description of the mistake */
+  title: string;
+  /** the rendered diagnostic, verbatim from the compiler */
+  output: string;
+}
+
+export interface DiagnosticsSection {
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  cases: DiagnosticsCase[];
+  footnote: string;
+  link: { label: string; href: string };
+}
+
+export interface InterpreterSection {
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  views: { label: string; lang: string; code: string }[];
+  viewsCaption: string;
+  run: { title: string; desc: string; code: string };
+  repl: { title: string; desc: string; lines: string[]; caption: string };
+  points: { title: string; desc: string }[];
+}
+
+export interface CompareSection {
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  head: [string, string, string, string, string];
+  rows: [string, string, string, string, string][];
+  blocks: { title: string; body: string }[];
+  footnote: string;
+  link: { label: string; href: string };
+}
+
+export interface WorkflowSection {
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  steps: { name: string; desc: string; code: string }[];
+  points: string[];
+}
+
+export interface TargetsSection {
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  triples: { name: string; note: string }[];
+  points: string[];
+  footnote: string;
+}
+
+export interface HistorySection {
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  releases: { version: string; date: string; summary: string }[];
+  footnote: string;
+  link: { label: string; href: string };
+}
+
+export interface BenchmarksSection {
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  workloads: { name: string; desc: string }[];
+  command: string;
+  points: string[];
+  footnote: string;
+}
+
+export interface FaqSection {
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  items: { q: string; a: string }[];
+}
+
+export interface DocsSection {
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  groups: { title: string; items: { label: string; desc: string; href: string }[] }[];
+  footnote: string;
+}
+
+export interface TermDefinition {
+  term: string;
+  def: string;
+}
+
 export interface SiteContent {
   locale: Locale;
   htmlLang: string;
@@ -54,8 +159,11 @@ export interface SiteContent {
     closeMenu: string;
     copy: string;
     copied: string;
+    /** accessible name for the sticky chapter rail */
+    chapters: string;
   };
   nav: {
+    /** In-page anchors; the chapter rail owns page navigation, so this is empty. */
     links: { label: string; href: string }[];
     docs: string;
     playground: string;
@@ -139,7 +247,7 @@ export interface SiteContent {
     title: string;
     subtitle: string;
     phases: {
-      /** mono tag above the card title, e.g. "v0.2 · 近期" */
+      /** mono tag above the card title, e.g. "01 · 近期" */
       tag: string;
       title: string;
       desc: string;
@@ -171,4 +279,17 @@ export interface SiteContent {
     communityValue: string;
     copyright: string;
   };
+  /** chapter rail: the sticky in-page navigation groups the sections below */
+  chapters: Chapter[];
+  diagnostics: DiagnosticsSection;
+  interpreter: InterpreterSection;
+  compare: CompareSection;
+  workflow: WorkflowSection;
+  targets: TargetsSection;
+  history: HistorySection;
+  benchmarks: BenchmarksSection;
+  faq: FaqSection;
+  docs: DocsSection;
+  /** inline glossary used by `inline()` via {{id}} markers */
+  glossary: Record<string, TermDefinition>;
 }

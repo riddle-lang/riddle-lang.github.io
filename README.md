@@ -47,11 +47,11 @@ src/
   pages/en/index.astro    英文首页（/en/）
   i18n/zh.ts, en.ts       全站文案，两份内容都实现 SiteContent
   i18n/types.ts           文案结构定义
-  components/             各个板块，FeatureShowcase 是特性展示的主体
+  components/             各个板块；ChapterNav + ChapterHead 构成五个章节的导航与分隔
   layouts/Base.astro      head、主题切换、滚动动画、复制按钮
   styles/global.css       设计令牌与全局样式
   lib/icons.ts            内联 SVG 图标路径
-  lib/inline.ts           把文案里的反引号转成 <code>
+  lib/inline.ts           反引号转 <code>，{{term-id}} 转术语 tooltip
   data/riddle.tmLanguage.json  Shiki 用的 Riddle 语法定义
 public/fonts/             Maple Mono 子集（等宽字体，含许可证）
 scripts/                  仅开发期使用，见下
@@ -63,6 +63,13 @@ scripts/                  仅开发期使用，见下
 会被 `npm run build` 里的 `astro check` 拦下（`astro build` 本身不做类型检查），所以
 中英文不会漏掉一边。文案里用反引号包住的片段会渲染成行内代码，不要在文案里写 HTML；
 行内代码不换行，长命令请放到 `usage` 或代码块里。
+
+### 新增段落
+
+一个新段落要动四处：`components/` 里的组件、`i18n/types.ts` 的接口与 `SiteContent` 字段、
+`i18n/zh.ts` 与 `i18n/en.ts` 的文案，以及两个页面（`pages/index.astro`、`pages/en/index.astro`）
+的接线。首页按 `chapters` 分成五个章节，`ChapterNav` 用 IntersectionObserver 高亮当前章节。
+文案里的反引号渲染成行内代码，`{{term-id}}` 按 `glossary` 渲染成可聚焦的术语 tooltip。
 
 ### 代码高亮
 

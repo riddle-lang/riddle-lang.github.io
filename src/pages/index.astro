@@ -1,14 +1,25 @@
 ---
 import Base from '../layouts/Base.astro';
+import ChapterNav from '../components/ChapterNav.astro';
+import ChapterHead from '../components/ChapterHead.astro';
 import Hero from '../components/Hero.astro';
 import FeatureShowcase from '../components/FeatureShowcase.astro';
-import Pipeline from '../components/Pipeline.astro';
-import Runtime from '../components/Runtime.astro';
-import ReleaseHighlights from '../components/ReleaseHighlights.astro';
+import Compare from '../components/Compare.astro';
+import Diagnostics from '../components/Diagnostics.astro';
+import QuickStart from '../components/QuickStart.astro';
+import Workflow from '../components/Workflow.astro';
 import Toolchain from '../components/Toolchain.astro';
 import Editors from '../components/Editors.astro';
-import QuickStart from '../components/QuickStart.astro';
+import Interpreter from '../components/Interpreter.astro';
+import Pipeline from '../components/Pipeline.astro';
+import Runtime from '../components/Runtime.astro';
+import Targets from '../components/Targets.astro';
+import ReleaseHighlights from '../components/ReleaseHighlights.astro';
 import Status from '../components/Status.astro';
+import Benchmarks from '../components/Benchmarks.astro';
+import Faq from '../components/Faq.astro';
+import DocsGrid from '../components/DocsGrid.astro';
+import History from '../components/History.astro';
 import Roadmap from '../components/Roadmap.astro';
 import Author from '../components/Author.astro';
 import CTA from '../components/CTA.astro';
@@ -19,15 +30,41 @@ const t = content.zh;
 
 <Base t={t}>
   <Hero t={t} />
+  <ChapterNav t={t} />
+
+  <!-- 01 语言特性与设计 -->
+  <ChapterHead chapter={t.chapters[0]!} index="01" />
   <FeatureShowcase t={t} />
-  <Pipeline t={t} />
-  <Runtime t={t} />
-  <ReleaseHighlights t={t} />
+  <Compare t={t} />
+  <Diagnostics t={t} />
+
+  <!-- 02 快速上手与工具链 -->
+  <ChapterHead chapter={t.chapters[1]!} index="02" />
+  <QuickStart t={t} />
+  <Workflow t={t} />
   <Toolchain t={t} />
   <Editors t={t} />
-  <QuickStart t={t} />
+
+  <!-- 03 编译架构与执行 -->
+  <ChapterHead chapter={t.chapters[2]!} index="03" />
+  <Interpreter t={t} />
+  <Pipeline t={t} />
+  <Runtime t={t} />
+  <Targets t={t} />
+
+  <!-- 04 状态边界与质量保证 -->
+  <ChapterHead chapter={t.chapters[3]!} index="04" />
+  <ReleaseHighlights t={t} />
   <Status t={t} />
+  <Benchmarks t={t} />
+  <Faq t={t} />
+
+  <!-- 05 文档与项目演进 -->
+  <ChapterHead chapter={t.chapters[4]!} index="05" />
+  <DocsGrid t={t} />
+  <History t={t} />
   <Roadmap t={t} />
   <Author t={t} />
+
   <CTA t={t} />
 </Base>

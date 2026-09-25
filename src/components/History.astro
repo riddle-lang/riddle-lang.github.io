@@ -1,0 +1,49 @@
+---
+import SectionHead from './SectionHead.astro';
+import { inline } from '../lib/inline';
+import type { SiteContent } from '../i18n';
+
+interface Props {
+  t: SiteContent;
+}
+
+const { t } = Astro.props;
+---
+
+<section id="history" class="section">
+  <div class="shell">
+    <SectionHead
+      eyebrow={t.history.eyebrow}
+      title={t.history.title}
+      subtitle={t.history.subtitle}
+    />
+
+    <ol class="mt-14">
+      {
+        t.history.releases.map((release, index) => (
+          <li
+            class="reveal grid gap-x-6 gap-y-1.5 border-t border-line py-5 sm:grid-cols-[10rem_1fr]"
+            style={`transition-delay:${index * 40}ms`}
+          >
+            <div class="flex items-baseline gap-3">
+              <span class="font-mono text-[13px] tracking-tight text-brand">{release.version}</span>
+              <span class="font-mono text-[12px] tracking-tight text-muted/70">{release.date}</span>
+            </div>
+            <p
+              class="text-[13.5px] leading-relaxed text-muted"
+              set:html={inline(release.summary, t.glossary)}
+            />
+          </li>
+        ))
+      }
+    </ol>
+
+    <p class="mt-6 text-[13.5px] leading-relaxed text-muted">
+      <span set:html={inline(t.history.footnote, t.glossary)} />
+      <a
+        class="ms-1 text-brand underline decoration-brand/40 underline-offset-4 transition-colors hover:decoration-brand"
+        href={t.history.link.href}>{t.history.link.label}</a
+      >
+    </p>
+  </div>
+</section>

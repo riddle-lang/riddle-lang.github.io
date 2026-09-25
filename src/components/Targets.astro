@@ -1,0 +1,54 @@
+---
+import SectionHead from './SectionHead.astro';
+import { inline } from '../lib/inline';
+import type { SiteContent } from '../i18n';
+
+interface Props {
+  t: SiteContent;
+}
+
+const { t } = Astro.props;
+---
+
+<section id="targets" class="section">
+  <div class="shell">
+    <SectionHead
+      eyebrow={t.targets.eyebrow}
+      title={t.targets.title}
+      subtitle={t.targets.subtitle}
+    />
+
+    <ul class="mt-14 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        t.targets.triples.map((triple, index) => (
+          <li
+            class="reveal rounded-[var(--radius-card)] border border-line bg-surface/40 p-4"
+            style={`transition-delay:${index * 40}ms`}
+          >
+            <p class="font-mono text-[12.5px] tracking-tight text-ink">{triple.name}</p>
+            <p
+              class="mt-1.5 text-[13px] leading-relaxed text-muted"
+              set:html={inline(triple.note, t.glossary)}
+            />
+          </li>
+        ))
+      }
+    </ul>
+
+    <ul class="mt-8 grid gap-3 sm:grid-cols-2">
+      {
+        t.targets.points.map((point) => (
+          <li class="flex gap-2.5 text-[13.5px] leading-relaxed text-muted">
+            <span class="mt-[8px] size-1 shrink-0 rounded-full bg-muted/50" aria-hidden="true" />
+            <span set:html={inline(point, t.glossary)} />
+          </li>
+        ))
+      }
+    </ul>
+
+    <p
+      class="mt-6 max-w-2xl text-[13px] leading-relaxed text-muted/85"
+      set:html={inline(t.targets.footnote, t.glossary)}
+    />
+  </div>
+</section>

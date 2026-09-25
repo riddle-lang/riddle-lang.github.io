@@ -1,0 +1,65 @@
+---
+import CodePane from './CodePane.astro';
+import SectionHead from './SectionHead.astro';
+import { inline } from '../lib/inline';
+import type { SiteContent } from '../i18n';
+
+interface Props {
+  t: SiteContent;
+}
+
+const { t } = Astro.props;
+---
+
+<section id="benchmarks" class="section border-t border-line bg-surface/45">
+  <div class="shell">
+    <SectionHead
+      eyebrow={t.benchmarks.eyebrow}
+      title={t.benchmarks.title}
+      subtitle={t.benchmarks.subtitle}
+    />
+
+    <div class="mt-14 grid gap-6 lg:grid-cols-[1.05fr_1fr]">
+      <ol class="grid gap-3">
+        {
+          t.benchmarks.workloads.map((workload, index) => (
+            <li
+              class="reveal rounded-[var(--radius-card)] border border-line bg-bg p-5"
+              style={`transition-delay:${index * 50}ms`}
+            >
+              <h3 class="font-mono text-[13px] tracking-tight text-ink">{workload.name}</h3>
+              <p
+                class="mt-2 text-[13.5px] leading-relaxed text-muted"
+                set:html={inline(workload.desc, t.glossary)}
+              />
+            </li>
+          ))
+        }
+      </ol>
+
+      <div class="reveal" style="transition-delay:120ms">
+        <CodePane
+          code={t.benchmarks.command}
+          lang="bash"
+          copyLabel={t.a11y.copy}
+          copiedLabel={t.a11y.copied}
+        />
+        <ul class="mt-5 space-y-2.5">
+          {
+            t.benchmarks.points.map((point) => (
+              <li class="flex gap-2.5 text-[13.5px] leading-relaxed text-muted">
+                <span class="mt-[8px] size-1 shrink-0 rounded-full bg-brand" aria-hidden="true" />
+                <span set:html={inline(point, t.glossary)} />
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+
+    <p
+      class="mt-8 max-w-3xl text-[13px] leading-relaxed text-muted/85"
+      set:html={inline(t.benchmarks.footnote, t.glossary)}
+    />
+  </div>
+</section>

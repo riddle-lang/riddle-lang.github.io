@@ -1,0 +1,68 @@
+---
+import type { SiteContent } from '../i18n';
+
+interface Props {
+  t: SiteContent;
+}
+
+const { t } = Astro.props;
+---
+
+<nav
+  class="sticky top-13 z-40 border-y border-line bg-bg/85 backdrop-blur"
+  aria-label={t.a11y.chapters}
+  data-chapter-nav
+>
+  <div class="shell flex items-center gap-1 overflow-x-auto py-1.5">
+    {
+      t.chapters.map((chapter) => (
+        <a
+          href={`#${chapter.id}`}
+          class="whitespace-nowrap rounded-full px-3 py-1.5 text-[12.5px] text-muted transition-colors hover:text-ink aria-[current=true]:bg-surface aria-[current=true]:text-ink"
+          data-chapter-link={chapter.id}
+        >
+          {chapter.label}
+        </a>
+      ))
+    }
+  </div>
+</nav>
+
+<script>
+  const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-chapter-link]'));
+  const targets = links
+    .map((link) => ({ link, target: document.getElementById(link.dataset.chapterLink ?? '') }))
+    .filter((entry): entry is { link: HTMLAnchorElement; target: HTMLElement } => entry.target !== null);
+
+  if (targets.length > 0) {
+    const setCurrent = (id: string) => {
+      for (const { link } of targets) {
+        const current = link.dataset.chapterLink === id;
+        if (current) {
+          link.setAttribute('aria-current', 'true');
+        } else {
+          link.removeAttribute('aria-current');
+        }
+      }
+    };
+
+    const visible = new Set<string>();
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const id = entry.target.id;
+          if (entry.isIntersecting) {
+            visible.add(id);
+          } else {
+            visible.delete(id);
+          }
+        }
+        const first = targets.find(({ target }) => visible.has(target.id));
+        if (first) setCurrent(first.target.id);
+      },
+      { rootMargin: '-20% 0px -70% 0px' },
+    );
+
+    for (const { target } of targets) observer.observe(target);
+  }
+</script>

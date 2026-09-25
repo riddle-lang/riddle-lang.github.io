@@ -1,0 +1,86 @@
+---
+import SectionHead from './SectionHead.astro';
+import { inline } from '../lib/inline';
+import type { SiteContent } from '../i18n';
+
+interface Props {
+  t: SiteContent;
+}
+
+const { t } = Astro.props;
+---
+
+<section id="compare" class="section border-t border-line bg-surface/45">
+  <div class="shell">
+    <SectionHead
+      eyebrow={t.compare.eyebrow}
+      title={t.compare.title}
+      subtitle={t.compare.subtitle}
+    />
+
+    <div class="reveal mt-14 overflow-x-auto rounded-[var(--radius-card)] border border-line">
+      <table class="w-full min-w-[46rem] border-collapse text-[13.5px]">
+        <caption class="sr-only">{t.compare.title}</caption>
+        <thead>
+          <tr class="border-b border-line bg-surface/60">
+            {
+              t.compare.head.map((cell, index) => (
+                <th
+                  scope="col"
+                  class:list={[
+                    'px-4 py-3 text-start font-medium tracking-tight',
+                    index === 0 ? 'text-muted' : 'text-ink',
+                  ]}
+                >
+                  {cell}
+                </th>
+              ))
+            }
+          </tr>
+        </thead>
+        <tbody>
+          {
+            t.compare.rows.map((row) => (
+              <tr class="border-b border-line align-top last:border-0">
+                {row.map((cell, index) =>
+                  index === 0 ? (
+                    <th scope="row" class="px-4 py-3 text-start font-normal text-muted">
+                      {cell}
+                    </th>
+                  ) : (
+                    <td class="px-4 py-3 text-ink/85" set:html={inline(cell, t.glossary)} />
+                  ),
+                )}
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-8 grid gap-5 md:grid-cols-3">
+      {
+        t.compare.blocks.map((block, index) => (
+          <div
+            class="reveal rounded-[var(--radius-card)] border border-dashed border-line p-6"
+            style={`transition-delay:${index * 60}ms`}
+          >
+            <h3 class="text-[15px] font-medium tracking-tight">{block.title}</h3>
+            <p
+              class="mt-2 text-[13.5px] leading-relaxed text-muted"
+              set:html={inline(block.body, t.glossary)}
+            />
+          </div>
+        ))
+      }
+    </div>
+
+    <p class="mt-8 text-[13.5px] leading-relaxed text-muted">
+      <span set:html={inline(t.compare.footnote, t.glossary)} />
+      <a
+        class="ms-1 text-brand underline decoration-brand/40 underline-offset-4 transition-colors hover:decoration-brand"
+        href={t.compare.link.href}>{t.compare.link.label}</a
+      >
+    </p>
+  </div>
+</section>

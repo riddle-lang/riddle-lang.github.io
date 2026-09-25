@@ -1,0 +1,101 @@
+---
+import CodePane from './CodePane.astro';
+import SectionHead from './SectionHead.astro';
+import { inline } from '../lib/inline';
+import type { SiteContent } from '../i18n';
+
+interface Props {
+  t: SiteContent;
+}
+
+const { t } = Astro.props;
+const [source, mir, result] = t.interpreter.views;
+---
+
+<section id="interpreter" class="section border-t border-line bg-surface/45">
+  <div class="shell">
+    <SectionHead
+      eyebrow={t.interpreter.eyebrow}
+      title={t.interpreter.title}
+      subtitle={t.interpreter.subtitle}
+    />
+
+    <div class="mt-14">
+      <div class="grid gap-4 lg:grid-cols-3">
+        {
+          [source, mir, result].map((view, index) => (
+            <div class="reveal" style={`transition-delay:${index * 60}ms`}>
+              <p class="mb-2 font-mono text-[12px] tracking-tight text-brand">
+                {String(index + 1).padStart(2, '0')} · {view.label}
+              </p>
+              <CodePane
+                code={view.code}
+                lang={view.lang}
+                copyLabel={t.a11y.copy}
+                copiedLabel={t.a11y.copied}
+              />
+            </div>
+          ))
+        }
+      </div>
+      <p class="mt-4 text-[13px] leading-relaxed text-muted" set:html={inline(t.interpreter.viewsCaption, t.glossary)} />
+    </div>
+
+    <div class="mt-14 grid gap-5 lg:grid-cols-2">
+      <div class="reveal rounded-[var(--radius-card)] border border-line p-6">
+        <h3 class="text-[16px] font-medium tracking-tight">{t.interpreter.run.title}</h3>
+        <p class="mt-2 text-[13.5px] leading-relaxed text-muted" set:html={inline(t.interpreter.run.desc, t.glossary)} />
+        <CodePane
+          class="mt-4"
+          code={t.interpreter.run.code}
+          lang="bash"
+          copyLabel={t.a11y.copy}
+          copiedLabel={t.a11y.copied}
+        />
+      </div>
+
+      <div class="reveal rounded-[var(--radius-card)] border border-line p-6" style="transition-delay:60ms">
+        <h3 class="text-[16px] font-medium tracking-tight">{t.interpreter.repl.title}</h3>
+        <p class="mt-2 text-[13.5px] leading-relaxed text-muted" set:html={inline(t.interpreter.repl.desc, t.glossary)} />
+        <div class="mt-4 overflow-hidden rounded-[var(--radius-card)] border border-line bg-code">
+          <div class="flex items-center gap-3 border-b border-line px-4 py-2.5">
+            <span class="flex shrink-0 gap-1.5" aria-hidden="true">
+              <span class="size-2.5 rounded-full bg-muted/25" />
+              <span class="size-2.5 rounded-full bg-muted/25" />
+              <span class="size-2.5 rounded-full bg-muted/25" />
+            </span>
+            <span class="font-mono text-xs tracking-tight text-muted">riddle repl</span>
+          </div>
+          <div class="overflow-x-auto p-4 font-mono text-[12.5px] leading-relaxed" tabindex="0">
+            {
+              t.interpreter.repl.lines.map((line) =>
+                line.startsWith('> ') ? (
+                  <p class="text-muted">
+                    <span class="me-2 text-brand" aria-hidden="true">
+                      ❯
+                    </span>
+                    {line.slice(2)}
+                  </p>
+                ) : (
+                  <p class="text-ink/85 ps-5">{line}</p>
+                ),
+              )
+            }
+          </div>
+        </div>
+        <p class="mt-3 text-[12.5px] leading-relaxed text-muted/80" set:html={inline(t.interpreter.repl.caption, t.glossary)} />
+      </div>
+    </div>
+
+    <div class="mt-14 grid gap-px overflow-hidden rounded-[var(--radius-card)] border border-line bg-line sm:grid-cols-3">
+      {
+        t.interpreter.points.map((point) => (
+          <div class="bg-bg p-6">
+            <h3 class="text-[15px] font-medium tracking-tight">{point.title}</h3>
+            <p class="mt-2 text-[13.5px] leading-relaxed text-muted" set:html={inline(point.desc, t.glossary)} />
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

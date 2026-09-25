@@ -1,0 +1,50 @@
+---
+import SectionHead from './SectionHead.astro';
+import { inline } from '../lib/inline';
+import type { SiteContent } from '../i18n';
+
+interface Props {
+  t: SiteContent;
+}
+
+const { t } = Astro.props;
+---
+
+<section id="workflow" class="section">
+  <div class="shell">
+    <SectionHead
+      eyebrow={t.workflow.eyebrow}
+      title={t.workflow.title}
+      subtitle={t.workflow.subtitle}
+    />
+
+    <ol class="mt-14 grid gap-px overflow-hidden rounded-[var(--radius-card)] border border-line bg-line md:grid-cols-2 lg:grid-cols-5">
+      {
+        t.workflow.steps.map((step, index) => (
+          <li class="reveal bg-bg p-5" style={`transition-delay:${index * 45}ms`}>
+            <span class="font-mono text-[12.5px] tabular-nums text-brand">
+              {String(index + 1).padStart(2, '0')}
+            </span>
+            <h3 class="mt-3 text-[14.5px] font-medium tracking-tight">{step.name}</h3>
+            <p
+              class="mt-2 text-[13px] leading-relaxed text-muted"
+              set:html={inline(step.desc, t.glossary)}
+            />
+            <code class="mt-3 block break-all font-mono text-[12px] text-ink/80">{step.code}</code>
+          </li>
+        ))
+      }
+    </ol>
+
+    <ul class="mt-8 grid gap-3 sm:grid-cols-2">
+      {
+        t.workflow.points.map((point) => (
+          <li class="flex gap-2.5 text-[13.5px] leading-relaxed text-muted">
+            <span class="mt-[8px] size-1 shrink-0 rounded-full bg-brand" aria-hidden="true" />
+            <span set:html={inline(point, t.glossary)} />
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
